@@ -1,0 +1,51 @@
+[
+  {
+    "id": "1",
+    "amount": 250,
+    "category": "Food",
+    "description": "Lunch with team",
+    "date": "2026-10-24"
+  },
+  {
+    "id": "2",
+    "amount": 120,
+    "category": "Travel",
+    "description": "Metro ride to office",
+    "date": "2026-10-23"
+  },
+  {
+    "id": "3",
+    "amount": 750,
+    "category": "Bills",
+    "description": "Broadband internet bill",
+    "date": "2026-10-20"
+  },
+  {
+    "id": "1792823973956",
+    "amount": 350,
+    "category": "Shopping",
+    "description": "New shoes yesterday",
+    "date": "2026-10-23"
+  },
+  {
+    "id": "1792826219037",
+    "amount": 500,
+    "category": "Other",
+    "description": "Tein tikit",
+    "date": "2026-10-24"
+  },
+  {
+    "id": "1792826297025",
+    "amount": 1500,
+    "category": "Bills",
+    "description": "Electricity bill",
+    "date": "2026-10-24"
+  },
+  {
+    "id": "1792826976445",
+    "amount": 970,
+    "category": "Travel",
+    "description": "fule",
+    "date": "2026-10-21"
+  }
+]

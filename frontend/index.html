@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Google Fonts for crisp typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-content">
+        <div class="logo-area">
+          <span class="logo-icon">💳</span>
+          <h1>Expense Tracker</h1>
+        </div>
+        <p class="subtitle">Track and manage your daily expenses.</p>
+      </div>
+    </header>
+
+    <!-- Global Toast / Alert Message Area -->
+    <div id="alertBox" class="alert-box hidden" role="alert">
+      <span id="alertIcon" class="alert-icon">ℹ️</span>
+      <span id="alertMessage" class="alert-message"></span>
+      <button id="alertCloseBtn" class="alert-close-btn" aria-label="Close notification">&times;</button>
+    </div>
+
+    <!-- Summary Box -->
+    <section class="summary-section">
+      <div class="summary-main-card">
+        <span class="summary-label">Total Expenses</span>
+        <div class="summary-amount" id="totalExpenseAmount">₹0.00</div>
+        <span class="summary-count" id="totalExpenseCount">0 transactions</span>
+      </div>
+
+      <div class="category-breakdown-grid" id="categoryBreakdownGrid">
+        <!-- Rendered dynamically by script.js -->
+      </div>
+    </section>
+
+    <!-- Main Content Area: Manual Form + Expenses Table -->
+    <div class="content-grid">
+      <!-- Left Column: Manual Form -->
+      <section class="card manual-card">
+        <div class="card-header">
+          <h2>Add Expense Manually</h2>
+        </div>
+        <form id="manualExpenseForm" class="manual-form">
+          <div class="form-group">
+            <label for="manualAmount">Amount (₹)</label>
+            <input type="number" id="manualAmount" step="0.01" min="0.01" placeholder="0.00" required />
+          </div>
+
+          <div class="form-group">
+            <div class="label-with-action">
+              <label for="manualCategory">Category</label>
+              <button type="button" class="btn-link" id="openAddCategoryBtnManual">+ Add Category</button>
+            </div>
+            <select id="manualCategory" required>
+              <!-- Loaded dynamically from PostgreSQL -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="manualDescription">Description</label>
+            <input type="text" id="manualDescription" placeholder="e.g. Team lunch" required />
+          </div>
+
+          <div class="form-group">
+            <label for="manualDate">Date</label>
+            <input type="date" id="manualDate" min="2025-01-01" max="2027-12-31" required />
+          </div>
+
+          <button type="submit" id="manualSubmitBtn" class="btn btn-secondary">
+            Save Expense
+          </button>
+        </form>
+      </section>
+
+      <!-- Right Column: Filter Bar & Expenses Table -->
+      <section class="card table-card">
+        <div class="card-header flex-between">
+          <h2>Recent Expenses</h2>
+
+          <!-- Filters -->
+          <div class="filters-container">
+            <div class="category-filter-wrapper">
+              <select id="filterCategory" aria-label="Filter by category">
+                <option value="All">All Categories</option>
+                <!-- Loaded dynamically -->
+              </select>
+              <button type="button" id="openAddCategoryBtnFilter" class="btn btn-outline-sm" title="Add New Category">+ Category</button>
+            </div>
+
+            <!-- Month filter: restricted between 2025 and 2027, default current month -->
+            <input type="month" id="filterMonth" min="2025-01" max="2027-12" aria-label="Filter by month" />
+
+            <button type="button" id="clearFiltersBtn" class="btn btn-text">Reset</button>
+          </div>
+        </div>
+
+        <!-- Expenses Table -->
+        <div class="table-responsive">
+          <table class="expenses-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th class="text-right">Amount</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="expensesTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+
+          <div id="emptyTableMessage" class="empty-state hidden">
+            <p>No expenses found for this selection.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Edit Expense Modal -->
+    <div id="editModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modalTitle">Edit Expense</h3>
+          <button type="button" id="closeModalBtn" class="modal-close">&times;</button>
+        </div>
+        <form id="editExpenseForm">
+          <input type="hidden" id="editExpenseId" />
+
+          <div class="form-group">
+            <label for="editAmount">Amount (₹)</label>
+            <input type="number" id="editAmount" step="0.01" min="0.01" required />
+          </div>
+
+          <div class="form-group">
+            <label for="editCategory">Category</label>
+            <select id="editCategory" required>
+              <!-- Loaded dynamically -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="editDescription">Description</label>
+            <input type="text" id="editDescription" required />
+          </div>
+
+          <div class="form-group">
+            <label for="editDate">Date</label>
+            <input type="date" id="editDate" min="2025-01-01" max="2027-12-31" required />
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" id="cancelEditBtn" class="btn btn-text">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add New Category Modal -->
+    <div id="addCategoryModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="categoryModalTitle">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="categoryModalTitle">Add New Category</h3>
+          <button type="button" id="closeCategoryModalBtn" class="modal-close">&times;</button>
+        </div>
+        <form id="addCategoryForm">
+          <div class="form-group">
+            <label for="newCategoryInput">Category Name</label>
+            <input
+              type="text"
+              id="newCategoryInput"
+              placeholder="e.g. Investment, Fuel, Gym"
+              required
+              autocomplete="off"
+            />
+            <p class="field-hint">First letter will be automatically capitalized.</p>
+          </div>
+
+          <div id="categoryModalError" class="modal-error hidden">This category already exists!</div>
+
+          <div class="modal-actions">
+            <button type="button" id="cancelCategoryBtn" class="btn btn-text">Cancel</button>
+            <button type="submit" class="btn btn-primary">Add Category</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
